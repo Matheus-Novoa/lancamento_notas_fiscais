@@ -4,16 +4,13 @@ from botcity.maestro import *
 from pathlib import Path
 import pygetwindow as gw
 import pyautogui as gui
+from dados import *
 BotMaestroSDK.RAISE_NOT_CONNECTED = False
 
 def main():
     bot = DesktopBot()
 
-    arquivo_planilha = Path(r'C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_sul\escola_canadenseZS_abr24\abril2024.xlsx')
-    arquivo_progresso = arquivo_planilha.parent / 'progresso.log'
-    planilha = pd.read_excel(arquivo_planilha, 'teste', header=0)
-
-    data_emissao = '30042024'
+    data_emissao = '31052024'
     codigo_refeicao = '3103' # zona sul
     # codigo_refeicao = '3004' # zona norte
     codigo_extra = '3609'
@@ -21,7 +18,7 @@ def main():
     if arquivo_progresso.exists():
         with open(arquivo_progresso) as f:
             linha = int(f.read().split()[-1])
-        planilha = planilha.iloc[linha:]
+        dados = dados.iloc[linha:]
 
     titulo_janela = "Lista de Programas"
     # Obtém todas as janelas com o título especificado
@@ -38,24 +35,7 @@ def main():
     gui.hotkey('alt','esc')
 
     try:
-        for linha in planilha.itertuples():
-            if linha:
-                aluno = linha.Aluno.split()[0]
-                responsavel_completo = linha.Responsavel_Financeiro.split()
-                responsavel = ''.join([responsavel_completo[0], ' ', responsavel_completo[-1]])
-                turma = linha.Turma
-                if 'Year' in turma or 'Y1' in turma:
-                    acumulador = '2'
-                else: 
-                    acumulador = '1'
-                valor = str('{:.2f}'.format(linha.Mensalidade)).replace('.',',')
-                refeicao = str(linha.Alimentação).replace('.',',')
-                valor_total = str('{:.2f}'.format(linha.Valor_Total)).replace('.',',')
-                extra = str('{:.2f}'.format(linha.Extra)).replace('.',',') if linha.Extra else None
-                numero_nota = str(linha.Nota)
-            else:
-                break
-
+        for linha in dados.itertuples():
             if not bot.find("ativar_edicao", matching=0.97, waiting_time=10000):
                 not_found("ativar_edicao")
             bot.click()
@@ -70,7 +50,7 @@ def main():
             if not bot.find("campo_acumulador", matching=0.97, waiting_time=10000):
                 not_found("campo_acumulador")
             bot.click_relative(106, 5)
-            bot.type_key(acumulador)
+            bot.type_key(linha.Acumulador)
             bot.enter()
             
             if not bot.find("aba_itens", matching=0.97, waiting_time=10000):
@@ -81,7 +61,7 @@ def main():
             bot.enter()
             bot.type_key('1')
             bot.enter()
-            bot.type_key(valor_total)
+            bot.type_key(linha.ValorTotal)
             bot.enter()
 
             if not bot.find("aba_contabilidade", matching=0.97, waiting_time=10000):
@@ -90,10 +70,10 @@ def main():
             if not bot.find("campo_valor_historico", matching=0.97, waiting_time=10000):
                 not_found("campo_valor_historico")
             bot.click_relative(145, 38)
-            bot.type_key(valor)
+            bot.type_key(linha.Mensalidade)
             bot.tab(presses=2)
             bot.key_end()
-            vlr_provisao = f'nf 2024/{numero_nota} {responsavel} aluno {aluno}'
+            vlr_provisao = f'nf 2024/{linha.Nota} {linha.ResponsávelFinanceiro} aluno {linha.Aluno}'
             bot.paste(vlr_provisao)
             bot.page_down()
             bot.key_end()
@@ -101,7 +81,7 @@ def main():
             bot.paste(vlr_devido)
             bot.enter()
 
-            if float(refeicao.replace(',','.')) != 0.0:
+            if float(linha.Alimentação.replace(',','.')) != 0.0:
                 # if not bot.find("botao_novo", matching=0.97, waiting_time=10000):
                 #     not_found("botao_novo")
                 # bot.click()
@@ -110,7 +90,7 @@ def main():
                 bot.enter()
                 bot.type_key(codigo_refeicao)
                 bot.enter()
-                bot.type_key(refeicao)
+                bot.type_key(linha.Alimentação)
                 bot.tab()
                 bot.type_key('8')
                 bot.tab()
@@ -120,13 +100,13 @@ def main():
                 bot.paste(vlr_provisao_refeicao)
                 bot.enter()
 
-            if extra:
+            if linha.Extra:
                 bot.enter()
                 bot.type_key('100')
                 bot.enter()
                 bot.type_key(codigo_extra)
                 bot.enter()
-                bot.type_key(extra)
+                bot.type_key(linha.Extra)
                 bot.tab()
                 bot.type_key('8')
                 bot.tab()
@@ -145,6 +125,7 @@ def main():
             if not bot.find("botao_gravar", matching=0.97, waiting_time=10000):
                 not_found("botao_gravar")
             bot.click()
+            ############ PRA ZONA NORTE TEM MAIS ESSE AQUI ############
             # if not bot.find("botao_gravar", matching=0.97, waiting_time=10000):
             #     not_found("botao_gravar")
             # bot.click()
