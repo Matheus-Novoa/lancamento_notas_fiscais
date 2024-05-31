@@ -1,7 +1,5 @@
-import pandas as pd
 from botcity.core import DesktopBot
 from botcity.maestro import *
-from pathlib import Path
 import pygetwindow as gw
 import pyautogui as gui
 from dados import *
