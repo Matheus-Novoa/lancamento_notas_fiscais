@@ -5,6 +5,12 @@ import pyautogui as gui
 from dados import *
 BotMaestroSDK.RAISE_NOT_CONNECTED = False
 
+
+if arquivo_progresso.exists():
+    with open(arquivo_progresso) as f:
+        linha = int(f.read().split()[-1])
+    dados = dados.iloc[linha:]
+
 def main():
     bot = DesktopBot()
 
@@ -12,11 +18,6 @@ def main():
     codigo_refeicao = '3103' # zona sul
     # codigo_refeicao = '3004' # zona norte
     codigo_extra = '3609'
-
-    if arquivo_progresso.exists():
-        with open(arquivo_progresso) as f:
-            linha = int(f.read().split()[-1])
-        dados = dados.iloc[linha:]
 
     titulo_janela = "Lista de Programas"
     # Obtém todas as janelas com o título especificado
@@ -98,7 +99,7 @@ def main():
                 bot.paste(vlr_provisao_refeicao)
                 bot.enter()
 
-            if linha.Extra:
+            if linha.Extra != 'nan':
                 bot.enter()
                 bot.type_key('100')
                 bot.enter()
@@ -114,11 +115,11 @@ def main():
                 bot.paste(vlr_provisao_extra)
                 bot.enter()
 
-            resposta = gui.confirm(title='Os dados foram preenchidos corretamente?', buttons=['Continuar', 'Pausa']) 
-            if resposta == 'Pausa':
-                with open(arquivo_progresso, 'w') as f:
-                    f.write(f'Pausa linha {linha.Index + 1}')
-                break
+            # resposta = gui.confirm(title='Os dados foram preenchidos corretamente?', buttons=['Continuar', 'Pausa']) 
+            # if resposta == 'Pausa':
+            #     with open(arquivo_progresso, 'w') as f:
+            #         f.write(f'Pausa linha {linha.Index + 1}')
+            #     break
 
             if not bot.find("botao_gravar", matching=0.97, waiting_time=10000):
                 not_found("botao_gravar")

@@ -12,17 +12,22 @@ dados['Aluno'] = dados['Aluno'].apply(lambda i: i.split()[0])
 def encurta_nome(nome):
     nome_completo = nome.split()
     return ''.join([nome_completo[0], ' ', nome_completo[-1]])
-# dados['ResponsavelFinanceiro'] = dados['ResponsavelFinanceiro'].apply(encurta_nome)
+dados['ResponsávelFinanceiro'] = dados['ResponsávelFinanceiro'].apply(encurta_nome)
 
 dados.loc[dados['Turma'].isin(['Year', 'Y1']), 'Acumulador'] = '2'
 dados['Acumulador'] = dados['Acumulador'].fillna('1')
 
-dados['Mensalidade'] = dados['Mensalidade'].apply(lambda x: '{:0.2f}'.format(x))
-dados['ValorTotal'] = dados['ValorTotal'].apply(lambda x: '{:0.2f}'.format(x))
-dados['Alimentação'] = dados['Alimentação'].apply(lambda x: '{:0.2f}'.format(x))
-dados['Extra'] = dados['Extra'].apply(lambda x: '{:0.2f}'.format(x))
+def formatar_valores(valor):
+    valor_2casas = '{:0.2f}'.format(valor)
+    return valor_2casas.replace('.',',')
+dados['Mensalidade'] = dados['Mensalidade'].apply(formatar_valores)
+dados['ValorTotal'] = dados['ValorTotal'].apply(formatar_valores)
+dados['Alimentação'] = dados['Alimentação'].apply(formatar_valores)
+dados['Extra'] = dados['Extra'].apply(formatar_valores)
 dados['Nota'] = dados['Nota'].astype(str)
 
 
 if __name__ == '__main__':
-    print(dados.columns)
+    for linha in dados.itertuples():
+        if not linha.Extra:
+            print(linha.Extra)
