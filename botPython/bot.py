@@ -14,10 +14,10 @@ if arquivo_progresso.exists():
 def main():
     bot = DesktopBot()
 
-    data_emissao = '31052024'
-    codigo_refeicao = '3103' # zona sul
-    # codigo_refeicao = '3004' # zona norte
-    codigo_extra = '3609'
+    data_emissao = '30042024'
+    # codigo_refeicao = '3103' # zona sul
+    codigo_refeicao = '3004' # zona norte
+    # codigo_extra = '3609'
 
     titulo_janela = "Lista de Programas"
     # Obtém todas as janelas com o título especificado
@@ -99,27 +99,27 @@ def main():
                 bot.paste(vlr_provisao_refeicao)
                 bot.enter()
 
-            if linha.Extra != 'nan':
-                bot.enter()
-                bot.type_key('100')
-                bot.enter()
-                bot.type_key(codigo_extra)
-                bot.enter()
-                bot.type_key(linha.Extra)
-                bot.tab()
-                bot.type_key('8')
-                bot.tab()
-                bot.key_end()
-                bot.space()
-                vlr_provisao_extra = f'extra cf {vlr_provisao}'
-                bot.paste(vlr_provisao_extra)
-                bot.enter()
+            # if linha.Extra != 'nan':
+            #     bot.enter()
+            #     bot.type_key('100')
+            #     bot.enter()
+            #     bot.type_key(codigo_extra)
+            #     bot.enter()
+            #     bot.type_key(linha.Extra)
+            #     bot.tab()
+            #     bot.type_key('8')
+            #     bot.tab()
+            #     bot.key_end()
+            #     bot.space()
+            #     vlr_provisao_extra = f'extra cf {vlr_provisao}'
+            #     bot.paste(vlr_provisao_extra)
+            #     bot.enter()
 
-            # resposta = gui.confirm(title='Os dados foram preenchidos corretamente?', buttons=['Continuar', 'Pausa']) 
-            # if resposta == 'Pausa':
-            #     with open(arquivo_progresso, 'w') as f:
-            #         f.write(f'Pausa linha {linha.Index + 1}')
-            #     break
+            resposta = gui.confirm(title='Os dados foram preenchidos corretamente?', buttons=['Continuar', 'Pausa']) 
+            if resposta == 'Pausa':
+                with open(arquivo_progresso, 'w') as f:
+                    f.write(f'Pausa linha {linha.Index + 1}')
+                break
 
             if not bot.find("botao_gravar", matching=0.97, waiting_time=10000):
                 not_found("botao_gravar")
@@ -131,10 +131,10 @@ def main():
 
             if not bot.find("botao_proximo", matching=0.97, waiting_time=10000):
                 not_found("botao_proximo")
-            bot.click()
+            bot.click(clicks=2, interval_between_clicks=1000)
     except:
         with open(arquivo_progresso, 'w') as f:
-            f.write(f'Erro linha {linha.Index}')
+            f.write(f'Erro {linha.ResponsávelFinanceiro} linha {linha.Index}')
             raise
 
 def not_found(label):
