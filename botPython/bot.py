@@ -115,23 +115,23 @@ def main():
             #     bot.paste(vlr_provisao_extra)
             #     bot.enter()
 
-            resposta = gui.confirm(title='Os dados foram preenchidos corretamente?', buttons=['Continuar', 'Pausa']) 
-            if resposta == 'Pausa':
-                with open(arquivo_progresso, 'w') as f:
-                    f.write(f'Pausa linha {linha.Index + 1}')
-                break
+            # resposta = gui.confirm(title='Os dados foram preenchidos corretamente?', buttons=['Continuar', 'Pausa']) 
+            # if resposta == 'Pausa':
+            #     with open(arquivo_progresso, 'w') as f:
+            #         f.write(f'Pausa linha {linha.Index + 1}')
+            #     break
 
             if not bot.find("botao_gravar", matching=0.97, waiting_time=10000):
                 not_found("botao_gravar")
             bot.click()
             ############ PRA ZONA NORTE TEM MAIS ESSE AQUI ############
-            # if not bot.find("botao_gravar", matching=0.97, waiting_time=10000):
-            #     not_found("botao_gravar")
-            # bot.click()
+            if not bot.find("botao_gravar", matching=0.97, waiting_time=10000):
+                not_found("botao_gravar")
+            bot.click()
 
             if not bot.find("botao_proximo", matching=0.97, waiting_time=10000):
                 not_found("botao_proximo")
-            bot.click(clicks=2, interval_between_clicks=1000)
+            bot.click()#clicks=2, interval_between_clicks=1500)
     except:
         with open(arquivo_progresso, 'w') as f:
             f.write(f'Erro {linha.ResponsávelFinanceiro} linha {linha.Index}')
