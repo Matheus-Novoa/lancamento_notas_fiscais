@@ -3,7 +3,7 @@ from pathlib import Path
 from tkinter import filedialog
 
 # arquivo_planilha = filedialog.askopenfilename()
-arquivo_planilha = Path(r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_abr24\Maple Bear Abril 24.xlsx")
+arquivo_planilha = Path(r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_mai24\Maple Bear Maio 24.xlsx")
 arquivo_progresso = arquivo_planilha.parent / 'progresso.log'
 dados = pd.read_excel(arquivo_planilha, 'dados', header=0)
 
@@ -28,4 +28,5 @@ dados['Nota'] = dados['Nota'].astype(str)
 
 
 if __name__ == '__main__':
-    print(dados)
+    for linha in dados.itertuples():
+        print(linha.Nota)

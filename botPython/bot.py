@@ -1,3 +1,5 @@
+import re
+import time
 from botcity.core import DesktopBot
 from botcity.maestro import *
 import pygetwindow as gw
@@ -6,20 +8,8 @@ from dados import *
 BotMaestroSDK.RAISE_NOT_CONNECTED = False
 
 
-if arquivo_progresso.exists():
-    with open(arquivo_progresso) as f:
-        linha = int(f.read().split()[-1])
-    dados = dados.iloc[linha:]
-
-def main():
-    bot = DesktopBot()
-
-    data_emissao = '30042024'
-    # codigo_refeicao = '3103' # zona sul
-    codigo_refeicao = '3004' # zona norte
-    # codigo_extra = '3609'
-
-    titulo_janela = "Lista de Programas"
+def mudar_janela(nome_janela):
+    titulo_janela = nome_janela
     # Obtém todas as janelas com o título especificado
     janelas = gw.getWindowsWithTitle(titulo_janela)
     # Verifica se foi encontrada alguma janela com o título especificado
@@ -30,20 +20,53 @@ def main():
         janela.activate()
     else:
         print("Nenhuma janela encontrada com o título especificado.")
-    bot.wait(1000)
+    time.sleep(1)
     gui.hotkey('alt','esc')
+
+
+def ultimos_digitos_nao_zero(sequencia):
+    # Expressão regular para encontrar a sequência de dígitos não-zeros no final
+    match = re.search(r'(\d{4})(0*)([1-9]\d*)', sequencia) 
+    return match.group(3) if match else sequencia
+  
+
+if arquivo_progresso.exists():
+    with open(arquivo_progresso) as f:
+        linha = int(f.read().split()[-1])
+    dados = dados.iloc[linha:]
+
+def main():
+    bot = DesktopBot()
+
+    data_emissao = '31052024'
+    # codigo_refeicao = '3103' # zona sul
+    codigo_refeicao = '3004' # zona norte
+    # codigo_extra = '3609'
+
+    mudar_janela('Lista de Programas')
 
     try:
         for linha in dados.itertuples():
             if not bot.find("ativar_edicao", matching=0.97, waiting_time=10000):
                 not_found("ativar_edicao")
             bot.click()
+            bot.wait(500)
+
+            if not bot.find("numero_nota", matching=0.97, waiting_time=10000):
+                not_found("numero_nota")
+            bot.click_relative(143, 5)
+            bot.control_c()
+            bot.wait(1000)
+
+            numero_nota_dominio = ultimos_digitos_nao_zero(bot.get_clipboard())
+            if numero_nota_dominio != linha.Nota:
+                print('Número da nota não bate com a retornada pelo sistema')
+                print(f'{numero_nota_dominio} | {linha.Nota}')
+                raise
 
             if not bot.find("campo_emissao", matching=0.97, waiting_time=10000):
                 not_found("campo_emissao")
             bot.click_relative(104, 7, wait_after=1500, clicks=3)
-            # bot.type_keys(["ctrl", "type_left"])
-            # bot.type_keys(["ctrl", "shift", "type_right"])
             bot.type_key(data_emissao)
 
             if not bot.find("campo_acumulador", matching=0.97, waiting_time=10000):
@@ -132,6 +155,7 @@ def main():
             if not bot.find("botao_proximo", matching=0.97, waiting_time=10000):
                 not_found("botao_proximo")
             bot.click()#clicks=2, interval_between_clicks=1500)
+            bot.wait(2000)
     except:
         with open(arquivo_progresso, 'w') as f:
             f.write(f'Erro {linha.ResponsávelFinanceiro} linha {linha.Index}')
@@ -143,3 +167,4 @@ def not_found(label):
 
 if __name__ == '__main__':
     main()
+    
