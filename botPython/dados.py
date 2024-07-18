@@ -3,9 +3,9 @@ from pathlib import Path
 from tkinter import filedialog
 
 # arquivo_planilha = filedialog.askopenfilename()
-arquivo_planilha = Path(r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_mai24\Maple Bear Maio 24.xlsx")
+arquivo_planilha = Path(r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_jun24\Maple Bear Jun 24.xlsx")
 arquivo_progresso = arquivo_planilha.parent / 'progresso.log'
-dados = pd.read_excel(arquivo_planilha, 'dados', header=0)
+dados = pd.read_excel(arquivo_planilha, 'dados', header=1)
 
 dados['Aluno'] = dados['Aluno'].apply(lambda i: i.split()[0])
 
@@ -23,10 +23,13 @@ def formatar_valores(valor):
 dados['Mensalidade'] = dados['Mensalidade'].apply(formatar_valores)
 dados['ValorTotal'] = dados['ValorTotal'].apply(formatar_valores)
 dados['Alimentação'] = dados['Alimentação'].apply(formatar_valores)
-# dados['Extra'] = dados['Extra'].apply(formatar_valores)
+try:
+    dados['Extra'] = dados['Extra'].apply(formatar_valores)
+except KeyError:
+    ...
 dados['Nota'] = dados['Nota'].astype(str)
 
 
 if __name__ == '__main__':
     for linha in dados.itertuples():
-        print(linha.Nota)
+        print(linha.Extra)
