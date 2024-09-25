@@ -40,7 +40,7 @@ def main(empresa, data_lancto):
     bot = DesktopBot()
     
     codigo_refeicao = '3004' if empresa == 'MB_ZN' else '3103'
-    codigo_extra = '3609' if empresa == 'MB_ZN' else None
+    codigo_extra = '3609' if empresa == 'MB_ZS' else None
 
     mudar_janela('Lista de Programas')
 
@@ -118,21 +118,22 @@ def main(empresa, data_lancto):
                 bot.paste(vlr_provisao_refeicao)
                 bot.enter()
 
-            if (linha.Extra != 'nan') and (empresa != 'MB_ZN'):
-                bot.enter()
-                bot.type_key('100')
-                bot.enter()
-                bot.type_key(codigo_extra)
-                bot.enter()
-                bot.type_key(linha.Extra)
-                bot.tab()
-                bot.type_key('8')
-                bot.tab()
-                bot.key_end()
-                bot.space()
-                vlr_provisao_extra = f'extra cf {vlr_provisao}'
-                bot.paste(vlr_provisao_extra)
-                bot.enter()
+            if empresa != 'MB_ZN':
+                if linha.Extra != 'nan':
+                    bot.enter()
+                    bot.type_key('100')
+                    bot.enter()
+                    bot.type_key(codigo_extra)
+                    bot.enter()
+                    bot.type_key(linha.Extra)
+                    bot.tab()
+                    bot.type_key('8')
+                    bot.tab()
+                    bot.key_end()
+                    bot.space()
+                    vlr_provisao_extra = f'extra cf {vlr_provisao}'
+                    bot.paste(vlr_provisao_extra)
+                    bot.enter()
 
             # resposta = gui.confirm(title='Os dados foram preenchidos corretamente?', buttons=['Continuar', 'Pausa']) 
             # if resposta == 'Pausa':
@@ -163,5 +164,5 @@ def not_found(label):
 
 
 if __name__ == '__main__':
-    main(empresa='MB_ZS', data_lancto='31072024')
+    main(empresa='MB_ZN', data_lancto='31082024')
     
