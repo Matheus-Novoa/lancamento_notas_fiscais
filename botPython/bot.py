@@ -8,21 +8,6 @@ from dados import *
 BotMaestroSDK.RAISE_NOT_CONNECTED = False
 
 
-def mudar_janela(nome_janela):
-    titulo_janela = nome_janela
-    # Obtém todas as janelas com o título especificado
-    janelas = gw.getWindowsWithTitle(titulo_janela)
-    # Verifica se foi encontrada alguma janela com o título especificado
-    if janelas:
-        # Seleciona a primeira janela encontrada (você pode iterar sobre a lista para selecionar a janela desejada)
-        janela = janelas[0] 
-        # Foca na janela (torna-a ativa)
-        janela.activate()
-    else:
-        print("Nenhuma janela encontrada com o título especificado.")
-    time.sleep(1)
-    gui.hotkey('alt','esc')
-
 
 def ultimos_digitos_nao_zero(sequencia):
     # Expressão regular para encontrar a sequência de dígitos não-zeros no final
@@ -42,7 +27,13 @@ def main(empresa, data_lancto):
     codigo_refeicao = '3004' if empresa == 'MB_ZN' else '3103'
     codigo_extra = '3609' if empresa == 'MB_ZS' else None
 
-    mudar_janela('Lista de Programas')
+    bot.wait(20000) # Espera para o usuário mudar para a tela do programa
+
+    '''
+    Colocar aqui uma janela dizendo para mudar para a janela do programa
+    A janela deve conter uma contagem regressiva e uma botão para cancelar
+    Após a contagem terminar a janela deve ser fechada
+    '''
 
     try:
         for linha in dados.itertuples():
