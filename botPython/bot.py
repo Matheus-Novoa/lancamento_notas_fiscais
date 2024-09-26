@@ -49,7 +49,6 @@ def main(empresa, data_lancto):
             if not bot.find("ativar_edicao", matching=0.97, waiting_time=10000):
                 not_found("ativar_edicao")
             bot.click()
-            bot.wait(500)
 
             bot.copy_to_clipboard('') # esvazia a área de transferência
 
