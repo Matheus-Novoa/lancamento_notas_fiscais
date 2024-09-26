@@ -51,13 +51,19 @@ def main(empresa, data_lancto):
             bot.click()
             bot.wait(500)
 
+            bot.copy_to_clipboard('') # esvazia a área de transferência
+
             if not bot.find("numero_nota", matching=0.97, waiting_time=10000):
                 not_found("numero_nota")
             bot.click_relative(143, 5)
             bot.control_c()
-            bot.wait(2000)
+            
+            # Garantia de que a variável consiga obter o valor da área de transferência
+            textoCtrlC = ''
+            while (len(textoCtrlC) == 0):
+                textoCtrlC = bot.get_clipboard()
 
-            numero_nota_dominio = ultimos_digitos_nao_zero(bot.get_clipboard())
+            numero_nota_dominio = ultimos_digitos_nao_zero(textoCtrlC)
             if numero_nota_dominio != linha.Nota:
                 print('Número da nota não bate com a retornada pelo sistema')
                 print(f'{numero_nota_dominio} | {linha.Nota}')
