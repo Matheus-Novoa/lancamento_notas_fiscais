@@ -169,5 +169,5 @@ def not_found(label):
 
 
 if __name__ == '__main__':
-    main(empresa='MB_ZN', data_lancto='31082024')
+    main(empresa='MB_ZN', data_lancto='30112024')
     
