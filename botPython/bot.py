@@ -1,9 +1,7 @@
 import re
-# import time
 from botcity.core import DesktopBot
 from botcity.maestro import *
 # import pygetwindow as gw
-# import pyautogui as gui
 from dados import *
 BotMaestroSDK.RAISE_NOT_CONNECTED = False
 
@@ -25,9 +23,9 @@ def main(empresa, data_lancto):
     bot = DesktopBot()
     
     codigo_refeicao = '3004' if empresa == 'MB_ZN' else '3103'
-    codigo_extra = '3609' if empresa == 'MB_ZS' else None
+    codigo_extra = '3609'
 
-    bot.wait(15000) # Espera para o usuário mudar para a tela do programa
+    bot.wait(10000) # Espera para o usuário mudar para a tela do programa
 
     '''
     Colocar aqui uma janela dizendo para mudar para a janela do programa
@@ -114,28 +112,22 @@ def main(empresa, data_lancto):
                 bot.paste(vlr_provisao_refeicao)
                 bot.enter()
 
-            if empresa != 'MB_ZN':
-                if linha.Extra != 'nan':
-                    bot.enter()
-                    bot.type_key('100')
-                    bot.enter()
-                    bot.type_key(codigo_extra)
-                    bot.enter()
-                    bot.type_key(linha.Extra)
-                    bot.tab()
-                    bot.type_key('8')
-                    bot.tab()
-                    bot.key_end()
-                    bot.space()
-                    vlr_provisao_extra = f'extra cf {vlr_provisao}'
-                    bot.paste(vlr_provisao_extra)
-                    bot.enter()
-
-            # resposta = gui.confirm(title='Os dados foram preenchidos corretamente?', buttons=['Continuar', 'Pausa']) 
-            # if resposta == 'Pausa':
-            #     with open(arquivo_progresso, 'w') as f:
-            #         f.write(f'Pausa linha {linha.Index + 1}')
-            #     break
+    
+            if float(linha.Extra.replace(',','.')) != 0.0:
+                bot.enter()
+                bot.type_key('100')
+                bot.enter()
+                bot.type_key(codigo_extra)
+                bot.enter()
+                bot.type_key(linha.Extra)
+                bot.tab()
+                bot.type_key('8')
+                bot.tab()
+                bot.key_end()
+                bot.space()
+                vlr_provisao_extra = f'extra cf {vlr_provisao}'
+                bot.paste(vlr_provisao_extra)
+                bot.enter()
 
             if not bot.find("botao_gravar", matching=0.97, waiting_time=10000):
                 not_found("botao_gravar")
@@ -160,5 +152,5 @@ def not_found(label):
 
 
 if __name__ == '__main__':
-    main(empresa='MB_ZS', data_lancto='24012025')
+    main(empresa='MB_ZN', data_lancto='31122024')
     
