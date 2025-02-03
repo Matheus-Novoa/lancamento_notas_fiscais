@@ -1,9 +1,9 @@
 import re
-import time
+# import time
 from botcity.core import DesktopBot
 from botcity.maestro import *
-import pygetwindow as gw
-import pyautogui as gui
+# import pygetwindow as gw
+# import pyautogui as gui
 from dados import *
 BotMaestroSDK.RAISE_NOT_CONNECTED = False
 
@@ -27,7 +27,7 @@ def main(empresa, data_lancto):
     codigo_refeicao = '3004' if empresa == 'MB_ZN' else '3103'
     codigo_extra = '3609' if empresa == 'MB_ZS' else None
 
-    bot.wait(20000) # Espera para o usuário mudar para a tela do programa
+    bot.wait(15000) # Espera para o usuário mudar para a tela do programa
 
     '''
     Colocar aqui uma janela dizendo para mudar para a janela do programa
@@ -90,7 +90,7 @@ def main(empresa, data_lancto):
             bot.type_key(linha.Mensalidade)
             bot.tab(presses=2)
             bot.key_end()
-            vlr_provisao = f'nf 2024/{linha.Nota} {linha.ResponsávelFinanceiro} aluno {linha.Aluno}'
+            vlr_provisao = f'nf 2025/{linha.Nota} {linha.ResponsávelFinanceiro} aluno {linha.Aluno}'
             bot.paste(vlr_provisao)
             bot.page_down()
             bot.key_end()
@@ -160,5 +160,5 @@ def not_found(label):
 
 
 if __name__ == '__main__':
-    main(empresa='MB_ZN', data_lancto='31082024')
+    main(empresa='MB_ZS', data_lancto='24012025')
     

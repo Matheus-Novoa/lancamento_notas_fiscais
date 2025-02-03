@@ -1,11 +1,11 @@
 import pandas as pd
 from pathlib import Path
-from tkinter import filedialog
+# from tkinter import filedialog
 
 # arquivo_planilha = filedialog.askopenfilename()
-arquivo_planilha = Path(r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_ago24\Maple Bear Ago 24.xlsx")
+arquivo_planilha = Path(r"C:\Users\novoa\OneDrive\Área de Trabalho\notas_MB\planilhas\zona_norte\escola_canadenseZN_dez24\Maple Bear Dez 24.xlsx")
 arquivo_progresso = arquivo_planilha.parent / 'progresso.log'
-dados = pd.read_excel(arquivo_planilha, 'teste', header=1)
+dados = pd.read_excel(arquivo_planilha, 'dados', header=1, skipfooter=1)
 
 dados['Aluno'] = dados['Aluno'].apply(lambda i: i.split()[0])
 
@@ -20,6 +20,7 @@ dados['Acumulador'] = dados['Acumulador'].fillna('1')
 def formatar_valores(valor):
     valor_2casas = '{:0.2f}'.format(valor)
     return valor_2casas.replace('.',',')
+
 dados['Mensalidade'] = dados['Mensalidade'].apply(formatar_valores)
 dados['ValorTotal'] = dados['ValorTotal'].apply(formatar_valores)
 dados['Alimentação'] = dados['Alimentação'].apply(formatar_valores)
