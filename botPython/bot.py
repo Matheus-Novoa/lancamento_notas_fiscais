@@ -52,9 +52,9 @@ def main(empresa, data_lancto):
                 textoCtrlC = bot.get_clipboard()
 
             numero_nota_dominio = ultimos_digitos_nao_zero(textoCtrlC)
-            if numero_nota_dominio != linha.Nota:
+            if numero_nota_dominio != linha.Notas:
                 print('Número da nota não bate com a retornada pelo sistema')
-                print(f'{numero_nota_dominio} | {linha.Nota}')
+                print(f'{numero_nota_dominio} | {linha.Notas}')
                 raise
 
             if not bot.find("campo_emissao", matching=0.97, waiting_time=10000):
@@ -88,7 +88,7 @@ def main(empresa, data_lancto):
             bot.type_key(linha.Mensalidade)
             bot.tab(presses=2)
             bot.key_end()
-            vlr_provisao = f'nf 2025/{linha.Nota} {linha.ResponsávelFinanceiro} aluno {linha.Aluno}'
+            vlr_provisao = f'nf 2025/{linha.Notas} {linha.ResponsávelFinanceiro} aluno {linha.Aluno}'
             bot.paste(vlr_provisao)
             bot.page_down()
             bot.key_end()
@@ -96,7 +96,7 @@ def main(empresa, data_lancto):
             bot.paste(vlr_devido)
             bot.enter()
 
-            if float(linha.Alimentação.replace(',','.')) != 0.0:
+            if (float(linha.Alimentação.replace(',','.')) != 0.0) and (linha.Alimentação != 'nan'):
                 bot.enter()
                 bot.type_key('100')
                 bot.enter()
@@ -111,23 +111,27 @@ def main(empresa, data_lancto):
                 vlr_provisao_refeicao = f'refeição cf {vlr_provisao}'
                 bot.paste(vlr_provisao_refeicao)
                 bot.enter()
-
     
-            if float(linha.Extra.replace(',','.')) != 0.0:
-                bot.enter()
-                bot.type_key('100')
-                bot.enter()
-                bot.type_key(codigo_extra)
-                bot.enter()
-                bot.type_key(linha.Extra)
-                bot.tab()
-                bot.type_key('8')
-                bot.tab()
-                bot.key_end()
-                bot.space()
-                vlr_provisao_extra = f'extra cf {vlr_provisao}'
-                bot.paste(vlr_provisao_extra)
-                bot.enter()
+            try:
+                if (float(linha.Extra.replace(',','.')) != 0.0) and (linha.Extra != 'nan'):
+                    bot.enter()
+                    bot.type_key('100')
+                    bot.enter()
+                    bot.type_key(codigo_extra)
+                    bot.enter()
+                    bot.type_key(linha.Extra)
+                    bot.tab()
+                    bot.type_key('8')
+                    bot.tab()
+                    bot.key_end()
+                    bot.space()
+                    vlr_provisao_extra = f'extra cf {vlr_provisao}'
+                    bot.paste(vlr_provisao_extra)
+                    bot.enter()
+
+            except AttributeError:
+                ...
+            
 
             if not bot.find("botao_gravar", matching=0.97, waiting_time=10000):
                 not_found("botao_gravar")
@@ -152,5 +156,5 @@ def not_found(label):
 
 
 if __name__ == '__main__':
-    main(empresa='MB_ZN', data_lancto='31122024')
+    main(empresa='MB_ZS', data_lancto='30072025')
     
