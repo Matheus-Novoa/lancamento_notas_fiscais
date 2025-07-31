@@ -1,27 +1,7 @@
 import re
-import time
 from botcity.core import DesktopBot
-from botcity.maestro import *
-import pygetwindow as gw
-import pyautogui as gui
 from dados import *
-BotMaestroSDK.RAISE_NOT_CONNECTED = False
 
-
-def mudar_janela(nome_janela):
-    titulo_janela = nome_janela
-    # Obtém todas as janelas com o título especificado
-    janelas = gw.getWindowsWithTitle(titulo_janela)
-    # Verifica se foi encontrada alguma janela com o título especificado
-    if janelas:
-        # Seleciona a primeira janela encontrada (você pode iterar sobre a lista para selecionar a janela desejada)
-        janela = janelas[0] 
-        # Foca na janela (torna-a ativa)
-        janela.activate()
-    else:
-        print("Nenhuma janela encontrada com o título especificado.")
-    time.sleep(1)
-    gui.hotkey('alt','esc')
 
 
 def ultimos_digitos_nao_zero(sequencia):
@@ -40,9 +20,15 @@ def main(empresa, data_lancto):
     bot = DesktopBot()
     
     codigo_refeicao = '3004' if empresa == 'MB_ZN' else '3103'
-    codigo_extra = '3609' if empresa == 'MB_ZS' else None
+    codigo_extra = '3609'
 
-    mudar_janela('Lista de Programas')
+    bot.wait(10000) # Espera para o usuário mudar para a tela do programa
+
+    '''
+    Colocar aqui uma janela dizendo para mudar para a janela do programa
+    A janela deve conter uma contagem regressiva e uma botão para cancelar
+    Após a contagem terminar a janela deve ser fechada
+    '''
 
     try:
         for linha in dados.itertuples():
@@ -63,9 +49,9 @@ def main(empresa, data_lancto):
                 textoCtrlC = bot.get_clipboard()
 
             numero_nota_dominio = ultimos_digitos_nao_zero(textoCtrlC)
-            if numero_nota_dominio != linha.Nota:
+            if numero_nota_dominio != linha.Notas:
                 print('Número da nota não bate com a retornada pelo sistema')
-                print(f'{numero_nota_dominio} | {linha.Nota}')
+                print(f'{numero_nota_dominio} | {linha.Notas}')
                 raise
 
             if not bot.find("campo_emissao", matching=0.97, waiting_time=10000):
@@ -99,7 +85,7 @@ def main(empresa, data_lancto):
             bot.type_key(linha.Mensalidade)
             bot.tab(presses=2)
             bot.key_end()
-            vlr_provisao = f'nf 2024/{linha.Nota} {linha.ResponsávelFinanceiro} aluno {linha.Aluno}'
+            vlr_provisao = f'nf 2025/{linha.Notas} {linha.ResponsávelFinanceiro} aluno {linha.Aluno}'
             bot.paste(vlr_provisao)
             bot.page_down()
             bot.key_end()
@@ -107,7 +93,7 @@ def main(empresa, data_lancto):
             bot.paste(vlr_devido)
             bot.enter()
 
-            if float(linha.Alimentação.replace(',','.')) != 0.0:
+            if (float(linha.Alimentação.replace(',','.')) != 0.0) and (linha.Alimentação != 'nan'):
                 bot.enter()
                 bot.type_key('100')
                 bot.enter()
@@ -122,9 +108,9 @@ def main(empresa, data_lancto):
                 vlr_provisao_refeicao = f'refeição cf {vlr_provisao}'
                 bot.paste(vlr_provisao_refeicao)
                 bot.enter()
-
-            if empresa != 'MB_ZN':
-                if linha.Extra != 'nan':
+    
+            try:
+                if (float(linha.Extra.replace(',','.')) != 0.0) and (linha.Extra != 'nan'):
                     bot.enter()
                     bot.type_key('100')
                     bot.enter()
@@ -140,11 +126,9 @@ def main(empresa, data_lancto):
                     bot.paste(vlr_provisao_extra)
                     bot.enter()
 
-            # resposta = gui.confirm(title='Os dados foram preenchidos corretamente?', buttons=['Continuar', 'Pausa']) 
-            # if resposta == 'Pausa':
-            #     with open(arquivo_progresso, 'w') as f:
-            #         f.write(f'Pausa linha {linha.Index + 1}')
-            #     break
+            except AttributeError:
+                ...
+            
 
             if not bot.find("botao_gravar", matching=0.97, waiting_time=10000):
                 not_found("botao_gravar")
@@ -169,5 +153,5 @@ def not_found(label):
 
 
 if __name__ == '__main__':
-    main(empresa='MB_ZN', data_lancto='30112024')
+    main(empresa='MB_ZS', data_lancto='30072025')
     
